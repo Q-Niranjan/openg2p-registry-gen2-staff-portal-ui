@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { toast } from "react-toastify";
 import { useFetch } from "@/shared/hooks/useFetch";
 import type { ChangeRequest } from "@/features/change-request/types/change-request";
@@ -19,14 +19,20 @@ export function useChangeRequestManager(changeId: string) {
     const [popupVisible, setPopupVisible] = useState(false);
     const [popupType, setPopupType] = useState<PopupType>(null);
 
-    const { data: detailsData, loading: detailsLoading } = useFetch<ChangeRequest>({
-        url: "/api/change-request/get",
-        enabled: !!changeId,
-        options: {
-            method: "POST",
+    const detailsFetchOptions = useMemo(
+        () => ({
+            method: "POST" as const,
             body: JSON.stringify({ change_request_id: changeId }),
-        },
-    });
+        }),
+        [changeId],
+    );
+
+    const { data: detailsData, loading: detailsLoading, execute: fetchDetails } =
+        useFetch<ChangeRequest>({
+            url: "/api/change-request/get",
+            enabled: !!changeId,
+            options: detailsFetchOptions,
+        });
 
     const { data: documentsData, loading: documentsLoading } = useFetch<{ documents: ChangeRequestDocument[] }>({
         url: "/api/change-request/get-documents",
@@ -49,6 +55,16 @@ export function useChangeRequestManager(changeId: string) {
         if (documentsData?.documents) setDocuments(documentsData.documents);
         setLoadingDocuments(documentsLoading)
     }, [documentsData]);
+
+    const refetchDetails = useCallback(async () => {
+        const result = (await fetchDetails("/api/change-request/get", detailsFetchOptions)) as
+            | ChangeRequest
+            | { error?: string }
+            | null;
+        if (result && typeof result === "object" && !("error" in result && result.error)) {
+            setDetails(result as ChangeRequest);
+        }
+    }, [changeId, fetchDetails, detailsFetchOptions]);
 
     const handleApprove = useCallback(async () => {
         setLoadingAction(true);
@@ -139,5 +155,6 @@ export function useChangeRequestManager(changeId: string) {
         handleApprove,
         handleReject: handleRejectClick,
         submitReject,
+        refetchDetails,
     };
 }

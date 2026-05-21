@@ -15,5 +15,6 @@ export * from './useAllDataModels';
 export * from './useAllIntakeForms';
 export * from './useAllImportFileConfigurations';
 export * from './useAllVcImports';
+export * from './useAllAwePolicyConfigurations';
 export * from './usePolicies';
 export * from './useRegisterRecordFields';

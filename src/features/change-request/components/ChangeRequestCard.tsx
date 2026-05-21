@@ -63,15 +63,22 @@ export default function ChangeRequestCard({
 
                 <div className="flex h-full min-h-0 flex-col">
                     <div className="flex flex-1 flex-col space-y-2 border-l-2 border-secondary-second pl-6">
-                        <KeyValue label={t('created_by')} value={changeRequest.created_by} />
                         <KeyValue
-                            label={t('verifications_required')}
-                            value={String(changeRequest.no_of_verifications_required ?? '—')}
+                            label={t('documents_attached')}
+                            value={documents.length.toString()}
                         />
-                        <KeyValue
-                            label={t('verifications_done')}
-                            value={String(changeRequest.no_of_verifications_done ?? '—')}
-                        />
+                        <div className="invisible" aria-hidden>
+                            <KeyValue
+                                label={t('verifications_required')}
+                                value="—"
+                            />
+                        </div>
+                        <div className="invisible" aria-hidden>
+                            <KeyValue
+                                label={t('verifications_done')}
+                                value="—"
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -143,7 +150,9 @@ export default function ChangeRequestCard({
                 </div>
             </div>
 
-            <div className="pt-4 flex items-center justify-between">
+            <div className="my-4 border-t border-secondary-second" />
+
+            <div className="flex items-center justify-between">
                 <button
                     type="button"
                     onClick={onViewDetails}

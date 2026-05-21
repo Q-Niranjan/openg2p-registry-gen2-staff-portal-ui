@@ -26,6 +26,8 @@ export interface ChangeRequest {
 
     no_of_verifications_required: number;
     no_of_verifications_done: number;
+    awe_request_id?: string | null;
+    awe_request_status_summary?: string | null;
     is_list: boolean;
     change_payload: any;
     current_register_data: any;

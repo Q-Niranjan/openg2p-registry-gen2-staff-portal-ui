@@ -70,6 +70,8 @@ export interface IntakeFormSubmission {
 
     number_of_verifications_required: number;
     number_of_verifications_done: number;
+    awe_request_id?: string | null;
+    awe_request_status_summary?: string | null;
 
     created_by: string;
     first_created_at: string;

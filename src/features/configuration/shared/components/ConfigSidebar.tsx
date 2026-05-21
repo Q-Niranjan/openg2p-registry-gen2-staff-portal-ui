@@ -68,6 +68,12 @@ const sidebarOptions: SidebarOption[] = [
             { id: 'outgest-templates', label: 'outgest_templates', path: '/configuration/outgest-configurations/templates' },
         ]
     },
+   {
+        id: 'awe-policy-config',
+        label: 'awe_policy_configurations',
+        iconUrl: '/images/config/menu_policy_configuration_08.png',
+        path: '/configuration/awe-policy-config',
+    },
     {
         id: 'data-policies',
         label: 'data_policies',

@@ -75,6 +75,7 @@ export default function SubmissionHeader({ submission, section_payloads, onActio
                 <AttachedDocuments documents={docsWithUrls} />
             </div>
 
+            {/* Approve / reject hidden from view
             {submission?.approval_status === "PENDING" && (
                 <Can action={INTAKE_FORM_ACTIONS.approve}>
                     <div className="my-4 border-t-2 border-primary-first" />
@@ -97,6 +98,7 @@ export default function SubmissionHeader({ submission, section_payloads, onActio
                     </div>
                 </Can>
             )}
+            */}
         </div>
     );
 }
@@ -157,6 +159,7 @@ const VerificationStats = ({
             </h3>
 
             <div className="border-l border-primary-first pl-6 space-y-2">
+                {/* Verifications required / done hidden from view
                 <div className="flex w-full overflow-hidden">
                     <span className="w-1/2 truncate" title={t('verifications_required')}>{t('verifications_required')}:</span>
                     <span className="w-1/2 pl-4 text-neutral-first font-medium truncate" title={submission?.number_of_verifications_required !== undefined ? String(submission.number_of_verifications_required) : ''}>
@@ -170,6 +173,7 @@ const VerificationStats = ({
                         {submission?.number_of_verifications_done}
                     </span>
                 </div>
+                */}
 
                 <div className="flex w-full overflow-hidden">
                     <span className="w-1/2 truncate" title={t('documents_attached')}>{t('documents_attached')}:</span>
