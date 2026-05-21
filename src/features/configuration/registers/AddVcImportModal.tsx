@@ -1,19 +1,17 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { useFetch } from '@/shared/hooks';
 import { toast } from 'react-toastify';
 import { useAllDataModels, useAllIntakeForms } from '@/features/configuration/shared';
-import type { VCConfiguration } from '@/features/configuration/shared/hooks/useAllVCConfigurations';
 import { BaseModal, CustomDropdown, InputField, TextAreaField } from '../shared/components';
 
-interface EditVCConfigModalProps {
+interface AddVcImportModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess?: () => void;
-    initialData?: VCConfiguration | null;
 }
 
 function parseDescriptorSchema(raw: string): Record<string, unknown> | null {
@@ -30,15 +28,10 @@ function parseDescriptorSchema(raw: string): Record<string, unknown> | null {
     }
 }
 
-export default function EditVCConfigModal({
-    isOpen,
-    onClose,
-    onSuccess,
-    initialData,
-}: EditVCConfigModalProps) {
+export default function AddVcImportModal({ isOpen, onClose, onSuccess }: AddVcImportModalProps) {
     const t = useTranslations();
     const { registerId } = useParams<{ registerId: string }>();
-    const { execute: updateConfig } = useFetch();
+    const { execute: createConfig } = useFetch();
     const { intake_forms, loading: intakeFormsLoading } = useAllIntakeForms(1, 100, registerId);
     const { dataModels, loading: dataModelsLoading } = useAllDataModels(1, 100);
 
@@ -65,21 +58,29 @@ export default function EditVCConfigModal({
         [dataModels],
     );
 
-    useEffect(() => {
-        if (initialData) {
-            setIntakeFormId(initialData.intake_form_id ?? '');
-            setDataModelId(initialData.data_model_id ?? '');
-            setVcMnemonic(initialData.vc_mnemonic ?? '');
-            setDescriptorSchemaJson(
-                JSON.stringify(initialData.descriptor_schema ?? {}, null, 2),
-            );
-        }
-    }, [initialData]);
+    const resetForm = () => {
+        setIntakeFormId('');
+        setDataModelId('');
+        setVcMnemonic('');
+        setDescriptorSchemaJson('{}');
+    };
+
+    const handleCancel = () => {
+        resetForm();
+        onClose();
+    };
 
     const handleSubmit = async () => {
-        if (!initialData?.vc_config_id) return;
-        if (!intakeFormId || !dataModelId || !vcMnemonic.trim()) {
-            toast.warn(t('toast_operation_failed'));
+        if (!intakeFormId) {
+            toast.warn(t('form_id_required'));
+            return;
+        }
+        if (!dataModelId) {
+            toast.warn(t('data_model_id_required'));
+            return;
+        }
+        if (!vcMnemonic.trim()) {
+            toast.warn(t('vc_mnemonic_required'));
             return;
         }
 
@@ -89,10 +90,9 @@ export default function EditVCConfigModal({
             return;
         }
 
-        const result = await updateConfig('/api/input-mechanism/update-vc-configuration', {
+        const result = await createConfig('/api/input-mechanism/create-vc-configuration', {
             method: 'POST',
             body: JSON.stringify({
-                vc_config_id: initialData.vc_config_id,
                 register_id: registerId,
                 intake_form_id: intakeFormId,
                 data_model_id: dataModelId,
@@ -102,20 +102,21 @@ export default function EditVCConfigModal({
         });
 
         if (result?.vc_config_id) {
-            toast.success(t('toast_vc_config_updated'));
+            toast.success(t('toast_vc_import_created'));
+            resetForm();
             onSuccess?.();
             onClose();
         } else {
-            toast.error(t('toast_vc_config_update_failed'));
+            toast.error(t('toast_vc_import_create_failed'));
         }
     };
 
-    if (!isOpen || !initialData) return null;
+    if (!isOpen) return null;
 
     return (
         <BaseModal
-            title={t('edit_vc_config')}
-            onClose={onClose}
+            title={t('add_vc_import')}
+            onClose={handleCancel}
             primaryActionLabel={t('save')}
             onPrimaryAction={handleSubmit}
         >
@@ -140,11 +141,13 @@ export default function EditVCConfigModal({
                     label={t('vc_mnemonic')}
                     value={vcMnemonic}
                     onChange={setVcMnemonic}
+                    placeholder={t('enter_vc_mnemonic')}
                 />
                 <TextAreaField
                     label={t('descriptor_schema')}
                     value={descriptorSchemaJson}
                     onChange={setDescriptorSchemaJson}
+                    placeholder="{}"
                 />
             </div>
         </BaseModal>

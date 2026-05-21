@@ -9,7 +9,7 @@ export { default as RegisterTabSectionConfigView } from './RegisterTabSectionCon
 export { default as RegisterTabConfigView } from './RegisterTabConfigView';
 export { default as RegisterScoreConfigView } from './RegisterScoreConfigView';
 export { default as RegisterImportFileConfigView } from './RegisterImportFileConfigView';
-export { default as RegisterVCConfigView } from './RegisterVCConfigView';
+export { default as RegisterVcImportView } from './RegisterVcImportView';
 export { default as ScoreContributingAttributesView } from './ScoreContributingAttributesView';
 export { default as RegistersConfigView } from './RegistersConfigView';
 export { default as SectionDetailsConfigView } from './SectionDetailsConfigView';

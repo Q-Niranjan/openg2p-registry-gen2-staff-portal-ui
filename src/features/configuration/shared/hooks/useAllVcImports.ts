@@ -1,6 +1,6 @@
 import { useFetch } from '@/shared/hooks';
 
-export interface VCConfiguration {
+export interface VcImport {
     vc_config_id: string;
     register_id: string;
     intake_form_id: string;
@@ -9,13 +9,13 @@ export interface VCConfiguration {
     descriptor_schema: Record<string, unknown>;
 }
 
-export function useAllVCConfigurations(
+export function useAllVcImports(
     registerId: string,
     currentPage: number = 1,
     pageSize: number = 10,
 ) {
     const { data, loading, error, execute } = useFetch<{
-        vc_configurations: VCConfiguration[];
+        vc_configurations: VcImport[];
         pagination?: {
             number_of_items: number;
             number_of_pages: number;
@@ -34,7 +34,7 @@ export function useAllVCConfigurations(
     });
 
     return {
-        vcConfigurations: data?.vc_configurations || [],
+        vcImports: data?.vc_configurations || [],
         pagination: data?.pagination,
         loading,
         error,

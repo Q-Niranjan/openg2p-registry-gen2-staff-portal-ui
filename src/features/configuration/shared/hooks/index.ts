@@ -14,6 +14,6 @@ export * from './useSubscriptionActivityLog';
 export * from './useAllDataModels';
 export * from './useAllIntakeForms';
 export * from './useAllImportFileConfigurations';
-export * from './useAllVCConfigurations';
+export * from './useAllVcImports';
 export * from './usePolicies';
 export * from './useRegisterRecordFields';
