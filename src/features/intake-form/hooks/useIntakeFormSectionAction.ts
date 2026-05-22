@@ -68,7 +68,7 @@ export const useIntakeFormSectionAction = ({
                 })
             });
 
-            if (!saveResult) {
+            if (saveResult?.error) {
                 toast.error(t('toast_operation_failed'));
                 return;
             }

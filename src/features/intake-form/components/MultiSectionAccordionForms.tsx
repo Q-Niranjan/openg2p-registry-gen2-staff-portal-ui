@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 import {
   createWidgetStore,
 } from '@openg2p/registry-widgets';
@@ -94,11 +95,13 @@ export default function MultiSectionAccordionForms({
   )
 
   const handleSubmit = async () => {
-    if (formHandle) {
-      const isValid = await formHandle.validate();
-      if (!isValid) {
-        return;
-      }
+    if (!formHandle) {
+      return;
+    }
+    const isValid = await formHandle.validate();
+    if (!isValid) {
+      toast.warn(t('fill_required_fields'));
+      return;
     }
     onAction?.(undefined, 'submit');
   };

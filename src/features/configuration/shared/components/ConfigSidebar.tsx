@@ -77,7 +77,7 @@ const sidebarOptions: SidebarOption[] = [
     {
         id: 'data-policies',
         label: 'data_policies',
-        iconUrl: "/images/config/data_policies_image_06.png",
+        iconUrl: "/images/config/menu_data_policies.png",
         path: '/configuration/data-policies'
     }
 ];
