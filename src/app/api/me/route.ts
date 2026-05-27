@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
     const auth = requireAuth(req);
     if (auth instanceof NextResponse) return auth;
     const backendConfig = getBackendConfig()
-    const iamUrl = `${backendConfig.iamUrl}${"/auth/get_user_profile"}`;
+    const iamUrl = `${backendConfig.iamUrl}${"/auth/get_logged_in_user"}`;
 
     const res = await fetch(iamUrl, {
         method: 'GET',

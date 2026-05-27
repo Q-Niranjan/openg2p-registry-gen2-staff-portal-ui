@@ -13,11 +13,18 @@ import { VERIFICATION_INTAKE_FORM_ACTIONS } from '@/features/intake-form/utils/v
 interface Props {
     task: ApprovalTask;
     isPending: boolean;
+    approvalDecisionBlocked?: boolean;
     onSubmit: (taskId: string, action: 'approve' | 'reject', comment: string) => Promise<boolean>;
     intakeForm?: boolean;
 }
 
-export default function ApprovalCard({ task, isPending, onSubmit, intakeForm = false }: Props) {
+export default function ApprovalCard({
+    task,
+    isPending,
+    approvalDecisionBlocked = false,
+    onSubmit,
+    intakeForm = false,
+}: Props) {
     const t = useTranslations();
     const { user } = useAuth();
     const { can } = useRbac();
@@ -29,11 +36,12 @@ export default function ApprovalCard({ task, isPending, onSubmit, intakeForm = f
     const [comment, setComment] = useState('');
     const [submittingAction, setSubmittingAction] = useState<'approve' | 'reject' | null>(null);
 
-    const isCurrentUser = Boolean(user?.sub && task.assignee === user.sub);
+    const isCurrentUser = Boolean(user?.preferred_username && task.assignee === user.preferred_username);
     const assigneeDisplay = isCurrentUser ? user.name : task.assignee;
 
     const isTaskActionable = task.status === 'open' || task.status === 'claimed';
-    const isActionable = isPending && canAct && isCurrentUser && isTaskActionable;
+    const showActionForm = isPending && canAct && isCurrentUser && isTaskActionable;
+    const isInteractionDisabled = approvalDecisionBlocked || submittingAction !== null;
 
     const hasDecision = Boolean(task.decision_action);
     const decisionApproved = task.decision_action === 'approve';
@@ -88,7 +96,7 @@ export default function ApprovalCard({ task, isPending, onSubmit, intakeForm = f
                 </div>
             </div>
 
-            {isActionable ? (
+            {showActionForm ? (
                 <>
                     <div>
                         <div className="text-[14px] font-medium text-neutral-first/50 mb-1">{t('message')}</div>
@@ -97,25 +105,26 @@ export default function ApprovalCard({ task, isPending, onSubmit, intakeForm = f
                             onChange={(e) => setComment(e.target.value)}
                             rows={2}
                             placeholder={t('type_your_message')}
-                            disabled={submittingAction !== null}
-                            className="w-full border border-black/25 rounded-[10px] p-2 text-sm resize-none focus:outline-none disabled:opacity-50"
+                            disabled={isInteractionDisabled}
+                            readOnly={approvalDecisionBlocked}
+                            className="w-full border border-black/25 rounded-[10px] p-2 text-sm resize-none focus:outline-none bg-white disabled:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                     </div>
 
                     <div className="flex items-center gap-4 pt-2">
                         <button
                             type="button"
-                            disabled={submittingAction !== null}
+                            disabled={isInteractionDisabled}
                             onClick={() => handleAction('reject')}
-                            className="px-4 py-1.5 text-[14px] font-medium rounded-[10px] bg-neutral-second text-neutral-first/50 disabled:opacity-50"
+                            className="px-4 py-1.5 text-[14px] font-medium rounded-[10px] bg-neutral-second text-neutral-first/50 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {submittingAction === 'reject' ? t('loading') : t('reject')}
                         </button>
                         <button
                             type="button"
-                            disabled={submittingAction !== null}
+                            disabled={isInteractionDisabled}
                             onClick={() => handleAction('approve')}
-                            className="px-4 py-1.5 text-[14px] font-medium rounded-[10px] bg-neutral-first text-neutral-second disabled:opacity-50"
+                            className="px-4 py-1.5 text-[14px] font-medium rounded-[10px] bg-neutral-first text-neutral-second disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {submittingAction === 'approve' ? t('loading') : t('approve')}
                         </button>

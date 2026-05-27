@@ -19,9 +19,18 @@ import { useChangeRequestManager, useRegisterSectionsFromCR } from "@/features/c
 import { useApprovals } from "@/features/approval/hooks/useApprovals";
 import { parseAweCurrentStage } from "@/features/approval/utils/aweStatusSummary";
 import { REGISTRY_CHANGE_REQUEST_ARTIFACT } from "@/features/approval/constants";
+import { useFetch } from "@/shared/hooks/useFetch";
 import { ChangeRequestValuesTabs } from "./ChangeRequestValuesTabs";
 import CRHeaderSkeleton from "./CRHeaderSkeleton";
 import SectionSchemaSkeleton from "./SectionSchemaSkeleton";
+
+interface ChangeRequestSequenceCheck {
+    change_request_id: string;
+    internal_record_id: string;
+    has_earlier_pending_change_requests: boolean;
+    number_of_earlier_pending_change_requests: number;
+    approval_decision_blocked: boolean;
+}
 
 interface Props {
     changeId: string;
@@ -61,6 +70,23 @@ export default function ChangeRequestDetailsView({ changeId, breadcrumb }: Props
         approvalArtifactContext,
         refetchDetails,
     );
+
+    const sequenceCheckOptions = useMemo(
+        () => ({
+            method: "POST" as const,
+            body: JSON.stringify({ change_request_id: changeId }),
+        }),
+        [changeId],
+    );
+
+    const { data: sequenceCheckData, loading: loadingSequenceCheck } =
+        useFetch<ChangeRequestSequenceCheck>({
+            url: "/api/change-request/check-sequence",
+            enabled: !!changeId,
+            options: sequenceCheckOptions,
+        });
+
+    const approvalDecisionBlocked = sequenceCheckData?.approval_decision_blocked ?? false;
 
     const widgetStoreOld = useMemo(() => createWidgetStore(), []);
     const widgetStoreNew = useMemo(() => createWidgetStore(), []);
@@ -145,12 +171,15 @@ export default function ChangeRequestDetailsView({ changeId, breadcrumb }: Props
                 </div>
 
                 <div className="w-full lg:w-[25%]">
-                    {loadingDetails || (!!details?.awe_request_id && loadingTasks) ? (
+                    {loadingDetails ||
+                    loadingSequenceCheck ||
+                    (!!details?.awe_request_id && loadingTasks) ? (
                         <ApprovalListSkeleton />
                     ) : (
                         <ApprovalList
                             tasks={tasks}
                             isPending={details?.approval_status === "PENDING"}
+                            approvalDecisionBlocked={approvalDecisionBlocked}
                             onSubmitDecision={submitDecision}
                         />
                     )}
