@@ -412,6 +412,8 @@
     "toast_intake_form_updated": "Intake form updated successfully",
     "toast_intake_form_create_failed": "Failed to create intake form",
     "toast_intake_form_update_failed": "Failed to update intake form",
+    "toast_intake_form_submission_save_failed": "Failed to save intake form submission",
+    "toast_intake_form_submission_finalize_failed": "Failed to finalize intake form submission",
     "toast_register_deleted": "Register \\",
     "toast_register_delete_failed": "Failed to delete register",
     "toast_register_delete_error": "An error occurred while deleting the register",
