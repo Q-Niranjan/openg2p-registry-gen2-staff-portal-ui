@@ -60,11 +60,6 @@ export default function IntakeFormSubmissionView({
     const { sections, form_name, form_description, loading: loadingSections } =
         useIntakeFormDetails(intakeFormId);
 
-    console.log(intakeFormId, 'intakeFormId');
-    console.log(sections, 'sections');
-    console.log(form_name, 'form_name');
-    console.log(form_description, 'form_description');
-
     const loading = loadingSubmission || loadingSections;
     const isDraft = submission?.draft_status === 'DRAFT';
 

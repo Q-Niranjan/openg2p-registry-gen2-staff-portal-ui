@@ -207,6 +207,8 @@
     "similarity": "Similarity",
     "access_denied": "Access Denied",
     "forbidden_subtitle": "You don't have permission to view this page.",
+    "record_access_denied": "Record Access Denied",
+    "record_access_denied_subtitle": "You don't have permission to view this record.",
     "add_new_record": "Add New Record",
     "loading_admin": "Loading the admin UI",
     "generic_error_title": "Something went wrong",
